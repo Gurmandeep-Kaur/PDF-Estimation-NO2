@@ -4,7 +4,7 @@
 
 This project studies how a real-world variable behaves statistically after a non-linear transformation and how a probability density function (PDF) can be learned from the transformed data.
 
-The dataset used is the India Air Quality dataset, and the feature selected is the NO2 concentration. A roll-number-dependent non-linear transformation is applied to the data, and a Gaussian-shaped probability density function is fitted to the transformed values using curve fitting.
+The dataset used is the India Air Quality dataset, and the feature selected is the NO2 concentration. A roll-number-dependent non-linear transformation is applied to the data, and a Gaussian-shaped probability density function is learned from the transformed values using Maximum Likelihood Estimation (MLE).
 
 ---
 
@@ -57,25 +57,28 @@ where:
 
 μ is the center of the distribution  
 λ controls the spread of the distribution  
-c is a scaling constant  
+c is a normalization constant  
 
 This function is Gaussian-shaped and approximates the empirical distribution of the transformed data.
 
 ---
 
-### Step 3: Parameter Estimation using Curve Fitting
+### Step 3: Parameter Estimation using Maximum Likelihood Estimation
 
-An empirical probability density function is first constructed using a histogram of the transformed data.
+The parameters μ and λ are estimated using Maximum Likelihood Estimation.
 
-The parameters λ, μ, and c are then estimated by fitting the PDF model to this empirical PDF using non-linear least squares curve fitting.
+For the model:
 
-The initial parameter guesses are:
+p̂(z) = c exp(-λ (z - μ)²)
 
-λ = 0.1  
+the MLE solutions are:
+
 μ = mean(z)  
-c = 1.0  
+λ = 1 / (2 Var(z))
 
-The curve fitting procedure adjusts the parameters to minimize the squared difference between the model curve and the histogram.
+The normalization constant c is derived theoretically using:
+
+c = sqrt(λ / π)
 
 ---
 
@@ -83,13 +86,15 @@ The curve fitting procedure adjusts the parameters to minimize the squared diffe
 
 The estimated parameters are:
 
-| Parameter          | Value                    |
-|--------------------|--------------------------|
-| Lambda (λ)         | 0.1                      |
-| Mu (μ)             | 25.814687284943872       |
-| c                  | 0.024841641057326256     |
+| Parameter       | Value                   |
+|-----------------|-------------------------|
+| Lambda (λ)      | 0.0014612298133120176   |
+| Mu (μ)          | 25.814687284943872      |
+| c (theoretical) | 0.021566731221112533    |
 
-The values of μ and λ are uniquely determined by the center and spread of the transformed data. 
+The value of μ represents the mean of the transformed data.  
+The value of λ is inversely related to the variance of the transformed data.  
+The value of c is derived from λ to ensure that the learned PDF integrates to one.
 
 ---
 
@@ -98,7 +103,7 @@ The values of μ and λ are uniquely determined by the center and spread of the 
 The notebook includes the following plots:
 
 1. Histogram of the transformed NO2 values (empirical PDF).  
-2. Fitted Gaussian-shaped PDF overlaid on the histogram.
+2. Fitted Gaussian-shaped PDF overlaid on the histogram using MLE-estimated parameters.
 
 The close alignment between the empirical PDF and the fitted curve confirms that the chosen model provides a good approximation of the transformed data distribution.
 
@@ -118,7 +123,6 @@ The close alignment between the empirical PDF and the fitted curve confirms that
 - pandas  
 - numpy  
 - matplotlib  
-- scipy  
 
 ---
 
